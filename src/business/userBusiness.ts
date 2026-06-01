@@ -1,0 +1,63 @@
+import * as userRepository from '../database/repositories/userRepository';
+import * as contactRepository from '../database/repositories/contactRepository';
+import { IUser } from '../models/UserModel'; 
+import { IContactRelation } from '../models/ContactModel';
+import { ForbiddenError, NotFoundError } from '../utils/errors';
+
+
+export const getProfile = async (userId: number): Promise<Omit<IUser, 'senha_hash'> | null> => {
+    const user = await userRepository.findUserById(userId);
+    if (!user) {
+        throw new NotFoundError('Usuário não encontrado');
+    }
+
+    return user; 
+};
+
+export const addContact = async (loggedInUserId: number, payload: Omit<IContactRelation, 'id_relacao'>): Promise<number | null> => {
+    if (loggedInUserId !== payload.id_paciente) {
+        throw new ForbiddenError('Permissão negada: Você só pode adicionar contatos para si mesmo.');
+    }
+    
+    const contactUser = await userRepository.findUserById(payload.id_contato);
+    if (!contactUser) {
+        throw new NotFoundError('Usuário de contato não encontrado.');
+    }
+
+    return contactRepository.createContactRelation(payload);
+};
+
+export const listMyContacts = async (loggedInUserId: number) => {
+    return contactRepository.findContactsByPatientId(loggedInUserId);
+};
+
+export const updateFcmToken = async (userId: number, fcmToken: string) => {
+    if (!fcmToken) {
+        throw new Error('Token FCM não pode ser vazio.');
+    }
+    return userRepository.updateFcmToken(userId, fcmToken);
+};
+
+export const deleteContact = async (loggedInUserId: number, relationId: number) => {
+    return contactRepository.deleteContactRelation(relationId, loggedInUserId);
+};
+
+export const updateProfile = async (userId: number, updateData: Partial<Omit<IUser, 'id_usuario' | 'senha_hash' | 'email' | 'data_criacao'>>) => {
+    
+    return userRepository.updateUserProfile(userId, updateData);
+};
+
+export const searchUserByEmail = async (email: string) => {
+    const user = await userRepository.findUserByEmail(email);
+    
+    if (!user) {
+        throw new NotFoundError('Nenhum usuário encontrado com este e-mail.');
+    }
+
+    return {
+        id_usuario: user.id_usuario,
+        nome: user.nome,
+        email: user.email,
+        genero: user.genero
+    };
+};
