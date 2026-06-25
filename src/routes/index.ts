@@ -8,12 +8,13 @@ import iotRoutes from './iotRoutes';
 import healthRoutes from './healthRoutes';
 import statsRouter from './statsRoutes';
 import contatoRoutes from './contatoRoutes';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
 
 router.use('/v1/auth', authRouter);
 router.use('/v1/users', userRouter);
-router.use('/v1/contatos', contatoRoutes);
+router.use('/v1/contatos', authMiddleware, contatoRoutes);
 router.use('/v1', emergencyRouter);
 router.use('/v1/agenda', agendaRouter);
 router.use('/v1/pop-up', popupRouter);
