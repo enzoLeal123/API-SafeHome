@@ -54,3 +54,29 @@ export const handleListContatos = async (req: Request, res: Response) => {
         return res.status(500).json({ error: 'Erro interno ao listar contatos.' });
     }
 };
+
+// Adicionar no contatoController.ts (após handleListContatos)
+
+export const handleDeleteContato = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ error: 'Usuário não autenticado.' });
+        }
+
+        const contatoId = Number(req.params.id);
+        if (isNaN(contatoId)) {
+            return res.status(400).json({ error: 'ID do contato inválido.' });
+        }
+
+        await contatosBusiness.deleteContato(userId, contatoId);
+        return res.status(200).json({ message: 'Contato removido com sucesso.' });
+
+    } catch (error: any) {
+        Logger.error('Erro ao deletar contato:', error);
+        if (error instanceof AppError) {
+            return res.status(error.statusCode).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'Erro interno ao deletar contato.' });
+    }
+};

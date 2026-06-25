@@ -1,5 +1,5 @@
 import * as contatosRepository from '../database/repositories/contatosRepository';
-import { InternalServerError } from '../utils/errors';
+import { AppError, InternalServerError } from '../utils/errors';
 import { Logger } from '../utils/logger';
 
 export const addContato = async (userId: number, data: { nome: string; telefone: string; parentesco: string | null }) => {
@@ -23,5 +23,21 @@ export const listContatos = async (userId: number) => {
     } catch (error) {
         Logger.error("Erro no business ao listar contatos:", error);
         throw new InternalServerError('Erro ao listar contatos.');
+    }
+};
+
+// Adicionar no contatosBusiness.ts (após listContatos)
+
+export const deleteContato = async (userId: number, contatoId: number) => {
+    try {
+        const deleted = await contatosRepository.deleteContatoById(contatoId, userId);
+        if (!deleted) {
+            throw new AppError('Contato não encontrado ou sem permissão.', 404);
+        }
+        return deleted;
+    } catch (error) {
+        if (error instanceof AppError) throw error;
+        Logger.error("Erro no business ao deletar contato:", error);
+        throw new InternalServerError('Erro ao deletar contato.');
     }
 };

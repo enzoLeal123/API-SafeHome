@@ -36,3 +36,16 @@ export const findContatosByUserId = async (userId: number): Promise<ContatoSumma
         throw new InternalServerError('Erro ao buscar contatos.');
     }
 };
+
+export const deleteContatoById = async (id: number, userId: number): Promise<boolean> => {
+    try {
+        // O userId garante que o usuário só pode deletar seus próprios contatos
+        const deleted = await db('contatos')
+            .where({ id, id_usuario: userId })
+            .delete();
+        return deleted > 0;
+    } catch (error) {
+        Logger.error("Erro ao deletar contato:", error);
+        throw new InternalServerError('Erro ao deletar contato.');
+    }
+};
