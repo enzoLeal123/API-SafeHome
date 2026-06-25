@@ -1,25 +1,10 @@
 import { Router } from 'express';
-import {
-    handleGetMyProfile,
-    handleGetMyStatus,
-    handleAddContact,
-    handleListContacts,
-    handleUpdateFcmToken,
-    handleUpdateProfile,
-    handleSearchUser,
-    handleDeleteContact
-} from '../controllers/userController';
+import { handleListContatos, handleAddContato } from '../controllers/contatoController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 
-const userRouter = Router();
+const router = Router();
 
-userRouter.get('/me', authMiddleware, handleGetMyProfile);
-userRouter.patch('/me', authMiddleware, handleUpdateProfile);
-userRouter.get('/me/status', authMiddleware, handleGetMyStatus);
-userRouter.get('/search', authMiddleware, handleSearchUser);
-userRouter.patch('/fcm-token', authMiddleware, handleUpdateFcmToken);
-userRouter.post('/contact', authMiddleware, handleAddContact);
-userRouter.get('/contacts', authMiddleware, handleListContacts);
-userRouter.delete('/contact/:id_relacao', authMiddleware, handleDeleteContact);
+router.get('/', authMiddleware, handleListContatos);
+router.post('/', authMiddleware, handleAddContato);
 
-export default userRouter;
+export default router;
