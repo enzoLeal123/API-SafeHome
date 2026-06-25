@@ -13,7 +13,7 @@ checkConnection();
 
 const allowedOrigins = [
   'http://localhost:5173',                  // dev local (Vite)
-  'https://projeto-safe-home.vercel.app',   // produção (Vercel)
+  'https://projeto-safe-home-nine.vercel.app',   // produção (Vercel)
 ];
 
 app.use(cors({
