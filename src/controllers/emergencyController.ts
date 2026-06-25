@@ -5,6 +5,8 @@ import { triggerPanicSchema } from '../validation/emergencySchemas';
 import { Logger } from '../utils/logger';
 import { OrigemPanico } from '../models/PanicEventModel'; 
 
+import { db } from '../database/connection'; 
+
 export const handleTriggerPanic = async (req: Request, res: Response) => {
     try {
         const userId = req.user?.id;
@@ -37,5 +39,24 @@ export const handleTriggerPanic = async (req: Request, res: Response) => {
             return res.status(error.statusCode).json({ error: error.message });
         }
         return res.status(500).json({ error: 'Erro interno ao processar acionamento de pânico.' });
+    }
+};
+
+export const handleGetEmergencyLogs = async (req: Request, res: Response) => {
+    try {
+        const userId = req.params.userId;
+        
+        if (!userId) {
+            return res.status(400).json({ error: 'ID do usuário não fornecido.' });
+        }
+
+        const logs = await db('EVENTO_PANICO')
+            .where('usuario_id', userId)
+            .orderBy('timestamp', 'desc');
+
+        return res.status(200).json(logs);
+    } catch (error: any) {
+        Logger.error('Erro ao buscar histórico de pânico:', error);
+        return res.status(500).json({ error: 'Erro interno ao buscar histórico de emergência.' });
     }
 };

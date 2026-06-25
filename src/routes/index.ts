@@ -14,7 +14,7 @@ const router = Router();
 router.use('/v1/auth', authRouter);
 router.use('/v1/users', userRouter);
 router.use('/v1/contatos', contatoRoutes);
-router.use('/v1', emergencyRouter);
+router.use('/v1/emergency', emergencyRouter); 
 router.use('/v1/agenda', agendaRouter);
 router.use('/v1/pop-up', popupRouter);
 router.use('/v1/iot', iotRoutes);
