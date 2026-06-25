@@ -50,7 +50,7 @@ export const handleGetEmergencyLogs = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'ID do usuário não fornecido.' });
         }
 
-        const logs = await db('EVENTO_PANICO')
+        const logs = await db('evento_panico')
             .where('usuario_id', userId)
             .orderBy('timestamp', 'desc');
 

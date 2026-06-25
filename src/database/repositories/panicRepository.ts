@@ -16,7 +16,7 @@ export const createPanicLog = async (panicData: Omit<IPanicEvent, 'id_panico' | 
 
 export const getEmergencyContactsData = async (userId: number): Promise<{ email: string, nome: string, fcm_token: string | null }[]> => {
     try {
-        return await db('CONTATO_EMERGENCIA as ce')
+        return await db('contato_emergencia as ce')
             .join('USUARIO as u', 'ce.id_contato', 'u.id_usuario')
             .select('u.email', 'u.nome', 'u.fcm_token') 
             .where('ce.id_paciente', userId);

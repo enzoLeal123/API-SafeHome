@@ -67,8 +67,8 @@ export const findPendingOccurrencesForCron = async (now: Date): Promise<any[]> =
     const currentDay = now.toISOString().split('T')[0];
     const currentHour = now.toTimeString().split(' ')[0].substring(0, 5);
     try {
-        return await db('OCORRENCIA_AGENDA as o')
-            .join('EVENTO_AGENDA as e', 'o.id_evento', 'e.id_evento')
+        return await db('ocorrencia_agenda as o')
+            .join('evento_agenda as e', 'o.id_evento', 'e.id_evento')
             .join('USUARIO as u', 'o.usuario_id', 'u.id_usuario')
             .select('o.id_ocorrencia', 'e.titulo', 'e.descricao', 'u.fcm_token', 'e.tipo')
             .where('o.data_ocorrencia', currentDay)
