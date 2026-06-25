@@ -5,7 +5,7 @@ import { ITelemetry } from '../../models/TelemetryModel';
 
 export const createTelemetryLog = async (data: Omit<ITelemetry, 'id_telemetria' | 'timestamp'>): Promise<number> => {
     try {
-        const [id] = await db('TELEMETRIA_IOT').insert(data);
+        const [id] = await db('telemetria_iot').insert(data);
         return id;
     } catch (error) {
         Logger.error("Erro ao criar log de telemetria IoT:", error);
@@ -15,7 +15,7 @@ export const createTelemetryLog = async (data: Omit<ITelemetry, 'id_telemetria' 
 
 export const getTelemetryLogsByUserId = async (userId: number, limit: number = 50): Promise<ITelemetry[]> => {
     try {
-        return await db('TELEMETRIA_IOT')
+        return await db('telemetria_iot')
             .where('id_usuario', userId)
             .orderBy('timestamp', 'desc')
             .limit(limit);

@@ -5,7 +5,7 @@ import { IHealthData } from '../../models/HealthDataModel';
 
 export const createHealthLog = async (data: Omit<IHealthData, 'id_saude' | 'timestamp'>): Promise<number> => {
     try {
-        const [id] = await db('TELEMETRIA_SAUDE').insert(data);
+        const [id] = await db('telemetria_saude').insert(data);
         return id;
     } catch (error) {
         Logger.error("Erro ao criar log de saúde do Smartwatch:", error);
@@ -15,7 +15,7 @@ export const createHealthLog = async (data: Omit<IHealthData, 'id_saude' | 'time
 
 export const getHealthLogsByUserId = async (userId: number, limit: number = 50): Promise<IHealthData[]> => {
     try {
-        return await db('TELEMETRIA_SAUDE')
+        return await db('telemetria_saude')
             .where('id_usuario', userId)
             .orderBy('timestamp', 'desc')
             .limit(limit);
