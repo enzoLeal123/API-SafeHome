@@ -1,41 +1,52 @@
 import { Request, Response } from 'express';
-// 1. Importação corrigida com chaves
-import { db } from '../database/connection';
+import * as contatosBusiness from '../business/contatosBusiness';
+import { AppError } from '../utils/errors';
+import { Logger } from '../utils/logger';
 
-export const getContatos = async (req: Request, res: Response) => {
-    // 1. Pega o ID do usuário que foi enviado pela URL (query param)
-    const { id_usuario } = req.query;
-
+export const handleAddContato = async (req: Request, res: Response) => {
     try {
-        // 2. Filtra no banco: traz apenas os contatos ONDE o id_usuario for igual ao logado
-        const linhas = await db('contatos').where({ id_usuario }).select('*');
-        return res.status(200).json(linhas);
-    } catch (error) {
-        console.error("Erro ao buscar contatos:", error);
-        return res.status(500).json({ erro: "Falha ao buscar contatos" });
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ error: 'Usuário não autenticado.' });
+        }
+
+        const { nome, telefone, parentesco } = req.body;
+        if (!nome || !telefone) {
+            return res.status(400).json({ error: 'Nome e telefone são obrigatórios.' });
+        }
+
+        const id = await contatosBusiness.addContato(userId, {
+            nome,
+            telefone,
+            parentesco: parentesco || null,
+        });
+
+        return res.status(201).json({ message: 'Contato adicionado com sucesso.', id });
+
+    } catch (error: any) {
+        Logger.error('Erro ao adicionar contato:', error);
+        if (error instanceof AppError) {
+            return res.status(error.statusCode).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'Erro interno ao adicionar contato.' });
     }
 };
 
-export const createContato = async (req: Request, res: Response) => {
-    // 1. Agora esperamos receber o id_usuario no corpo da requisição
-    const { nome, telefone, parentesco, id_usuario } = req.body;
-
-    if (!nome || !telefone || !id_usuario) {
-        return res.status(400).json({ erro: "Nome, telefone e ID do usuário são obrigatórios" });
-    }
-
+export const handleListContatos = async (req: Request, res: Response) => {
     try {
-        // 2. Salva no banco vinculando o contato ao usuário
-        const [insertId] = await db('contatos').insert({
-            nome,
-            telefone,
-            parentesco,
-            id_usuario 
-        });
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ error: 'Usuário não autenticado.' });
+        }
 
-        return res.status(201).json({ id: insertId, nome, telefone, parentesco, id_usuario });
-    } catch (error) {
-        console.error("Erro ao inserir contato:", error);
-        return res.status(500).json({ erro: "Falha ao salvar contato" });
+        const contatos = await contatosBusiness.listContatos(userId);
+        return res.status(200).json(contatos);
+
+    } catch (error: any) {
+        Logger.error('Erro ao listar contatos:', error);
+        if (error instanceof AppError) {
+            return res.status(error.statusCode).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'Erro interno ao listar contatos.' });
     }
 };

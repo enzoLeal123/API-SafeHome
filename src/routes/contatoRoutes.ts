@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { getContatos, createContato } from '../controllers/contatoController';
+import { handleListContatos, handleAddContato } from '../controllers/contatoController';
 
 const router = Router();
 
-router.get('/', getContatos);
+router.get('/', handleListContatos);
 
-router.post('/', createContato);
+router.post('/', handleAddContato);
 
 export default router;
