@@ -13,6 +13,7 @@ checkConnection();
 
 app.use(cors());
 app.use(express.json());
+app.get('/teste', (req, res) => res.json({ ok: true }));
 
 
 app.use('/', masterRouter);

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const healthTelemetrySchema = z.object({
-    type: z.enum(['BPM', 'FALL_DETECTION', 'OXYGEN', 'SLEEP_STATUS', 'STEP_COUNT'], {
+    type: z.enum(['BPM', 'FALL_DETECTION', 'OXYGEN', 'SLEEP_STATUS', 'STEP_COUNT', 'STRESS_LEVEL'], {
         message: "Tipo de telemetria de saúde inválido."
     }),
     value: z.union([z.number(), z.string()]),
