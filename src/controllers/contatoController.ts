@@ -5,6 +5,9 @@ import { Logger } from '../utils/logger';
 
 export const handleAddContato = async (req: Request, res: Response) => {
     try {
+        console.log('USER DO TOKEN:', req.user);
+        console.log('HEADERS:', req.headers.authorization);
+        console.log('USER DO TOKEN GET:', req.user);
         const userId = req.user?.id;
         if (!userId) {
             return res.status(401).json({ error: 'Usuário não autenticado.' });
@@ -34,6 +37,7 @@ export const handleAddContato = async (req: Request, res: Response) => {
 
 export const handleListContatos = async (req: Request, res: Response) => {
     try {
+        console.log('USER DO TOKEN GET:', req.user);
         const userId = req.user?.id;
         if (!userId) {
             return res.status(401).json({ error: 'Usuário não autenticado.' });
