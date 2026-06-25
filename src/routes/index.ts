@@ -14,7 +14,7 @@ const router = Router();
 
 router.use('/v1/auth', authRouter);
 router.use('/v1/users', userRouter);
-router.use('/v1/contatos', authMiddleware, contatoRoutes);
+router.use('/v1/contatos', (req: Request, res: Response, next: any) => { console.log('ROTA CONTATOS CHAMADA'); next(); }, authMiddleware, contatoRoutes);
 router.use('/v1', emergencyRouter);
 router.use('/v1/agenda', agendaRouter);
 router.use('/v1/pop-up', popupRouter);
