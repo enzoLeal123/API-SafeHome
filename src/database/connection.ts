@@ -22,6 +22,6 @@ export const checkConnection = async () => {
         Logger.info(`✅ Banco de Dados conectado com sucesso! (SafeHome V2)`);
     } catch (error) {
         Logger.error('❌ Falha crítica ao conectar no Banco de Dados:', error);
-        process.exit(1);
+        // Removido o process.exit(1) para evitar crash-loop
     }
 };

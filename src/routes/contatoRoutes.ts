@@ -1,10 +1,12 @@
 import { Router } from 'express';
-import { getContatos, createContato } from '../controllers/contatoController';
+import { authMiddleware } from '../middlewares/authMiddleware';
+import { handleListContatos, handleAddContato, handleDeleteContato } from '../controllers/contatoController';
+
 
 const router = Router();
 
-router.get('/', getContatos);
-
-router.post('/', createContato);
+router.get('/', authMiddleware, handleListContatos);
+router.post('/', authMiddleware, handleAddContato);
+router.delete('/:id', authMiddleware, handleDeleteContato);
 
 export default router;

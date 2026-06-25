@@ -13,7 +13,7 @@ export const getOccurrenceStatsInRange = async (
     endDate: string
 ): Promise<{ total: number; concluidas: number }> => {
     try {
-        const rows = await db('OCORRENCIA_AGENDA')
+        const rows = await db('ocorrencia_agenda')
             .where('usuario_id', patientId)
             .andWhere('data_ocorrencia', '>=', startDate)
             .andWhere('data_ocorrencia', '<=', endDate)
@@ -39,7 +39,7 @@ export const getOccurrenceStatsInRange = async (
  */
 export const getLastPanicTimestamp = async (patientId: number): Promise<Date | null> => {
     try {
-        const row = await db('EVENTO_PANICO')
+        const row = await db('evento_panico')
             .where('usuario_id', patientId)
             .orderBy('timestamp', 'desc')
             .select('timestamp')
@@ -58,7 +58,7 @@ export const getLastPanicTimestamp = async (patientId: number): Promise<Date | n
  */
 export const getUserCreationDate = async (patientId: number): Promise<Date | null> => {
     try {
-        const row = await db('USUARIO')
+        const row = await db('usuario')
             .where('id_usuario', patientId)
             .select('data_criacao')
             .first();

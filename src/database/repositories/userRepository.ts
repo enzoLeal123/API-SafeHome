@@ -1,3 +1,4 @@
+// build fix 2026-06-25
 import { db } from '../connection';
 import { IUser } from '../../models/UserModel';
 import { AppError, ForbiddenError, NotFoundError, BadRequestError, InternalServerError } from '../../utils/errors';
@@ -5,7 +6,7 @@ import { Logger } from '../../utils/logger';
 
 export const createUser = async (userData: Omit<IUser, 'id_usuario' | 'data_criacao'>): Promise<number | null> => {
     try {
-        const [id] = await db('USUARIO').insert(userData);
+        const [id] = await db('usuario').insert(userData);
         return id;
     } catch (error) {
         Logger.error("Erro ao criar usuário:", error);
@@ -15,7 +16,7 @@ export const createUser = async (userData: Omit<IUser, 'id_usuario' | 'data_cria
 
 export const findUserByEmail = async (email: string): Promise<IUser | null> => {
     try {
-        const user = await db('USUARIO').where({ email }).first();
+        const user = await db('usuario').where({ email }).first();
         return user || null;
     } catch (error) {
         Logger.error("Erro ao buscar usuário por email:", error);
@@ -25,7 +26,7 @@ export const findUserByEmail = async (email: string): Promise<IUser | null> => {
 
 export const findUserById = async (userId: number): Promise<Omit<IUser, 'senha_hash'> | null> => {
     try {
-        const user = await db('USUARIO')
+        const user = await db('usuario')
             .select('id_usuario', 'email', 'nome', 'genero', 'is_paciente', 'is_contato_emergencia', 'fcm_token', 'settings_json')
             .where('id_usuario', userId)
             .first();
@@ -38,7 +39,7 @@ export const findUserById = async (userId: number): Promise<Omit<IUser, 'senha_h
 
 export const updateFcmToken = async (userId: number, fcmToken: string): Promise<boolean> => {
     try {
-        const count = await db('USUARIO')
+        const count = await db('usuario')
             .where('id_usuario', userId)
             .update({ fcm_token: fcmToken });
         return count > 0;
@@ -58,7 +59,7 @@ export const updateUserProfile = async (userId: number, updateData: UpdateProfil
             dataToUpdate.settings_json = JSON.stringify(dataToUpdate.settings_json);
         }
 
-        const count = await db('USUARIO')
+        const count = await db('usuario')
             .where('id_usuario', userId)
             .update(dataToUpdate);
 
@@ -71,7 +72,7 @@ export const updateUserProfile = async (userId: number, updateData: UpdateProfil
 
 export const updateUserPassword = async (userId: number, newPasswordHash: string): Promise<boolean> => {
     try {
-        const count = await db('USUARIO')
+        const count = await db('usuario')
             .where('id_usuario', userId)
             .update({ senha_hash: newPasswordHash });
         return count > 0;

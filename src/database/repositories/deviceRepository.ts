@@ -8,7 +8,7 @@ import { IIotDevice } from '../../models/IotDeviceModel';
  */
 export const findDevicesByUserId = async (userId: number): Promise<IIotDevice[]> => {
     try {
-        return await db('DISPOSITIVO_IOT')
+        return await db('dispositivo_iot')
             .where('id_usuario', userId)
             .orderBy('nome', 'asc');
     } catch (error) {
@@ -22,7 +22,7 @@ export const findDevicesByUserId = async (userId: number): Promise<IIotDevice[]>
  */
 export const findDeviceById = async (deviceId: string): Promise<IIotDevice | null> => {
     try {
-        const device = await db('DISPOSITIVO_IOT')
+        const device = await db('dispositivo_iot')
             .where('id_dispositivo', deviceId)
             .first();
         return device || null;
@@ -37,7 +37,7 @@ export const findDeviceById = async (deviceId: string): Promise<IIotDevice | nul
  */
 export const createDevice = async (deviceData: IIotDevice): Promise<string> => {
     try {
-        await db('DISPOSITIVO_IOT').insert(deviceData);
+        await db('dispositivo_iot').insert(deviceData);
         return deviceData.id_dispositivo;
     } catch (error) {
         Logger.error('Erro ao criar dispositivo IoT:', error);
@@ -53,7 +53,7 @@ export const updateDevice = async (
     updateData: Partial<Pick<IIotDevice, 'nome' | 'status_ativo'>>
 ): Promise<boolean> => {
     try {
-        const count = await db('DISPOSITIVO_IOT')
+        const count = await db('dispositivo_iot')
             .where('id_dispositivo', deviceId)
             .update(updateData);
         return count > 0;

@@ -7,7 +7,7 @@ type OccurrenceInput = Omit<IAgendaOccurrence, 'id_ocorrencia'>;
 
 export const createAgendaTemplate = async (templateData: Omit<IAgendaEvent, 'id_evento'>): Promise<number | null> => {
     try {
-        const [id] = await db('EVENTO_AGENDA').insert(templateData);
+        const [id] = await db('evento_agenda').insert(templateData);
         return id;
     } catch (error) {
         Logger.error("Erro ao criar template de agenda:", error);
@@ -19,7 +19,7 @@ export const createOccurrencesBatch = async (occurrences: OccurrenceInput[]): Pr
     if (occurrences.length === 0) return true;
     
     try {
-        await db.batchInsert('OCORRENCIA_AGENDA', occurrences); 
+        await db.batchInsert('ocorrencia_agenda', occurrences); 
         return true;
     } catch (error) {
         Logger.error("Erro no batch insert de ocorrências:", error);
@@ -29,7 +29,7 @@ export const createOccurrencesBatch = async (occurrences: OccurrenceInput[]): Pr
 
 export const findOccurrencesByPatientId = async (patientId: number): Promise<IAgendaOccurrence[]> => {
     try {
-        return await db('OCORRENCIA_AGENDA')
+        return await db('ocorrencia_agenda')
             .where('usuario_id', patientId)
             .orderBy('data_ocorrencia', 'desc');
     } catch (error) {
@@ -40,7 +40,7 @@ export const findOccurrencesByPatientId = async (patientId: number): Promise<IAg
 
 export const findTemplateById = async (eventId: number): Promise<IAgendaEvent | null> => {
     try {
-        const template = await db('EVENTO_AGENDA').where('id_evento', eventId).first();
+        const template = await db('evento_agenda').where('id_evento', eventId).first();
         return template || null;
     } catch (error) {
         Logger.error("Erro ao buscar template por ID:", error);
@@ -50,11 +50,11 @@ export const findTemplateById = async (eventId: number): Promise<IAgendaEvent | 
 
 export const updateOccurrenceStatus = async (occurrenceId: number, status: boolean): Promise<IAgendaOccurrence> => {
     try {
-        await db('OCORRENCIA_AGENDA')
+        await db('ocorrencia_agenda')
             .where('id_ocorrencia', occurrenceId)
             .update({ status_concluido: status });
             
-        const updated = await db('OCORRENCIA_AGENDA').where('id_ocorrencia', occurrenceId).first();
+        const updated = await db('ocorrencia_agenda').where('id_ocorrencia', occurrenceId).first();
         if (!updated) throw new InternalServerError('Falha ao buscar ocorrência após atualização.');
         return updated;
     } catch (error) {
@@ -83,7 +83,7 @@ export const findPendingOccurrencesForCron = async (now: Date): Promise<any[]> =
 
 export const findTemplatesByPatientId = async (patientId: number): Promise<IAgendaEvent[]> => {
     try {
-        return await db('EVENTO_AGENDA').where('id_paciente', patientId);
+        return await db('evento_agenda').where('id_paciente', patientId);
     } catch (error) {
         Logger.error("Erro ao buscar templates por paciente:", error);
         throw new InternalServerError('Erro ao buscar templates.');
@@ -92,7 +92,7 @@ export const findTemplatesByPatientId = async (patientId: number): Promise<IAgen
 
 export const findOccurrenceById = async (occurrenceId: number): Promise<IAgendaOccurrence | null> => {
     try {
-        const occurrence = await db('OCORRENCIA_AGENDA')
+        const occurrence = await db('ocorrencia_agenda')
             .where('id_ocorrencia', occurrenceId)
             .first();
         return occurrence || null;
@@ -104,7 +104,7 @@ export const findOccurrenceById = async (occurrenceId: number): Promise<IAgendaO
 
 export const updateTemplate = async (eventId: number, templateData: Partial<Omit<IAgendaEvent, 'id_evento' | 'id_paciente' | 'id_criador'>>): Promise<boolean> => {
     try {
-        const count = await db('EVENTO_AGENDA').where('id_evento', eventId).update(templateData);
+        const count = await db('evento_agenda').where('id_evento', eventId).update(templateData);
         return count > 0;
     } catch (error) {
         Logger.error("Erro ao atualizar template de agenda:", error);
@@ -114,7 +114,7 @@ export const updateTemplate = async (eventId: number, templateData: Partial<Omit
 
 export const deleteTemplate = async (eventId: number): Promise<boolean> => {
     try {
-        const count = await db('EVENTO_AGENDA').where('id_evento', eventId).delete();
+        const count = await db('evento_agenda').where('id_evento', eventId).delete();
         return count > 0;
     } catch (error) {
         Logger.error("Erro ao deletar template de agenda:", error);
@@ -124,7 +124,7 @@ export const deleteTemplate = async (eventId: number): Promise<boolean> => {
 
 export const findOccurrencesByDate = async (patientId: number, date: string): Promise<IAgendaOccurrence[]> => {
     try {
-        return await db('OCORRENCIA_AGENDA')
+        return await db('ocorrencia_agenda')
             .where({ usuario_id: patientId, data_ocorrencia: date });
     } catch (error) {
         Logger.error("Erro ao buscar ocorrências por data:", error);
@@ -134,7 +134,7 @@ export const findOccurrencesByDate = async (patientId: number, date: string): Pr
 
 export const createMonthlyNote = async (noteData: Omit<IMonthlyNote, 'id_nota' | 'data_criacao'>): Promise<number | null> => {
     try {
-        const [id] = await db('NOTA_MENSAL').insert(noteData);
+        const [id] = await db('nota_mensal').insert(noteData);
         return id;
     } catch (error) {
         Logger.error("Erro ao criar nota mensal:", error); 
@@ -146,7 +146,7 @@ export const findMonthlyNotes = async (patientId: number, monthReference: string
     // monthReference no formato YYYY-MM. No banco, mes_referencia e salvo como YYYY-MM-01.
     const referenceDate = `${monthReference}-01`;
     try {
-        return await db('NOTA_MENSAL')
+        return await db('nota_mensal')
             .where({ id_paciente: patientId, mes_referencia: referenceDate })
             .orderBy('data_criacao', 'desc');
     } catch (error) {

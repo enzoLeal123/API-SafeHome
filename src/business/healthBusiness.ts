@@ -9,14 +9,14 @@ const pendingAlerts = new Map<number, NodeJS.Timeout>();
 
 export const processHealthData = async (userId: number, data: HealthTelemetryInput) => {
     
-    const tradutorDeTipos: Record<string, string> = {
-        'BPM': 'BPM',
-        'FALL_DETECTION': 'QUEDA',
-        'OXYGEN': 'OXIGENIO',
-        'SLEEP_STATUS': 'SONO',
-        'STEP_COUNT': 'PASSOS' 
-    };
-
+  const tradutorDeTipos: Record<string, string> = {
+    'BPM': 'BPM',
+    'FALL_DETECTION': 'QUEDA',
+    'OXYGEN': 'OXIGENIO',
+    'SLEEP_STATUS': 'SONO',
+    'STEP_COUNT': 'PASSOS',
+    'STRESS_LEVEL': 'STRESS_LEVEL'
+};
     const healthPayload = {
         id_usuario: userId,
         tipo_dado: tradutorDeTipos[data.type] as "SONO" | "BPM" | "QUEDA" | "OXIGENIO",
